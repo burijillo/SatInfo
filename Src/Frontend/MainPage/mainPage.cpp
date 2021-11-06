@@ -27,7 +27,7 @@ MyFrame::MyFrame()
     menuBar->Append(menuHelp, "&Help");
     SetMenuBar( menuBar );
     CreateStatusBar();
-    std::string test_0 = "Paco";
+    std::string test_0 = "Pacote";
     std::string test = generateHelloString(test_0);
     SetStatusText(test);
     Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
