@@ -17,6 +17,7 @@ MyFrame::MyFrame()
 {
     // TEST
     curl_manager curlManager;
+    curlManager.download_data(curl_manager::download_type::CURRENT_DATA);
 
     // END TEST
 

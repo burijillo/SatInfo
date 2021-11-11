@@ -7,27 +7,14 @@
 curl_manager::curl_manager(){
 
     current_path = std::filesystem::current_path();
-    CURLcode ret;
-    curl = curl_easy_init();
+}
+
+/**
+ * @brief Destroy the curl manager::curl manager object
+ * 
+ */
+curl_manager::~curl_manager() {
     if (curl != nullptr) {
-        std::string cookies_path = current_path + ("/../../cookies/cookies_space_track.txt");
-        std::string config_path = current_path + ("/../../cookies/config.txt");
-        std::string json_out_path = current_path + ("/../../Down_Data.json");
-
-        curl_auth(cookies_path, config_path);
-
-        //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookies_path.c_str());
-        // TODO REVISIT SO SEARCH IS CONFIGURABLE
-        curl_easy_setopt(curl, CURLOPT_URL, "https://www.space-track.org/basicspacedata/query/class/gp_history/format/tle/NORAD_CAT_ID/25544/orderby/EPOCH%20desc/limit/1/format/json");
-        FILE* fp;
-        fp = fopen(json_out_path.c_str(),"wb");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        ret = curl_easy_perform(curl);
-        log_download_data();
-        fclose(fp);
-
         curl_easy_cleanup(curl);
         curl_global_cleanup();
     }
@@ -74,6 +61,56 @@ bool curl_manager::curl_auth(const std::string cookies_path, const std::string c
 
     curl_easy_reset(curl);
     
+    return res;
+}
+
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
+
+void curl_manager::download_data(const download_type _download_type) {
+    CURLcode ret;
+    // Check which download type
+    std::string download_url = download_manager(_download_type);
+
+    curl = curl_easy_init();
+    if (curl != nullptr) {
+        std::string cookies_path = current_path + ("/../../cookies/cookies_space_track.txt");
+        std::string config_path = current_path + ("/../../cookies/config.txt");
+        std::string json_out_path = current_path + ("/../../Down_Data.json");
+
+        curl_auth(cookies_path, config_path);
+
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookies_path.c_str());
+        //curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, (curl_off_t)100000);
+        // TODO REVISIT SO SEARCH IS CONFIGURABLE
+        curl_easy_setopt(curl, CURLOPT_URL,download_url.c_str());
+        FILE* fp;
+        fp = fopen(json_out_path.c_str(),"wb");
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        ret = curl_easy_perform(curl);
+        log_download_data();
+        fclose(fp);
+
+        curl_easy_cleanup(curl);
+        curl = nullptr;
+    }
+}
+
+std::string curl_manager::download_manager(const download_type _download_type) {
+    std::string res = "";
+
+    switch (_download_type) {
+        case download_type::CURRENT_DATA:
+        res = "https://www.space-track.org/basicspacedata/query/class/satcat/format/json";
+        //res = "https://www.space-track.org/basicspacedata/query/class/satcat/format/csv";
+
+        break;
+    }
+
     return res;
 }
 
