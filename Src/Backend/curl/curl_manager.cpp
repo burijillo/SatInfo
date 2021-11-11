@@ -105,7 +105,8 @@ std::string curl_manager::download_manager(const download_type _download_type) {
 
     switch (_download_type) {
         case download_type::CURRENT_DATA:
-        res = "https://www.space-track.org/basicspacedata/query/class/satcat/format/json";
+        res = "https://www.space-track.org/basicspacedata/query/class/boxscore/format/json";
+        //res = "https://www.space-track.org/basicspacedata/query/class/satcat/format/json";
         //res = "https://www.space-track.org/basicspacedata/query/class/satcat/format/csv";
 
         break;
