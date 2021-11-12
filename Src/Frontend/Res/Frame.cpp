@@ -47,6 +47,9 @@ Frame::Frame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoi
     wxWindow* wnd10 = CreateTextCtrl("This pane will prompt the user before hiding.");
     m_mgr.AddPane(wnd10, wxAuiPaneInfo().Name("test10").Caption("Text Pane with Hide Prompt").Bottom().Layer(1).Position(1).Icon(wxArtProvider::GetBitmap(wxART_WARNING, wxART_OTHER, wxSize(iconSize, iconSize))));
 
+    wxTextCtrl* testin = (wxTextCtrl*)wnd10;
+    std::string hey = "\n\nAlohaaaa";
+    (*testin) << hey;
 
     m_mgr.GetPane("test10").Show().Bottom().Layer(0).Row(0).Position(0);
     m_mgr.Update();
