@@ -1,4 +1,5 @@
 #include "curl_manager.h"
+#include "../Log/Logger.h"
 
 /**
  * @brief Construct a new curl manager::curl manager object
@@ -30,6 +31,7 @@ curl_manager::~curl_manager() {
 bool curl_manager::curl_auth(const std::string cookies_path, const std::string config_path) {
     bool res = false;
     CURLcode ret;
+    Logger& logger = Logger::GetLogger();
 
     //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookies_path.c_str());
@@ -44,11 +46,10 @@ bool curl_manager::curl_auth(const std::string cookies_path, const std::string c
         if (ret == CURLE_OK){
             ret = curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies);
             if(ret == CURLE_OK && cookies) {
-                // TODO REVISIT WHEN LOG EXISTS
-                std::cout << "\nCOOKIES\n";
+                logger.CreateMessage("COOKIES");
                 struct curl_slist *each = cookies;
                 while(each) {
-                    std::cout << each->data << "\n";
+                    logger.CreateMessage(each->data);
                     each = each->next;
                 }
                 curl_slist_free_all(cookies);
@@ -82,7 +83,7 @@ void curl_manager::download_data(const download_type _download_type) {
 
         curl_auth(cookies_path, config_path);
 
-        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
         curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookies_path.c_str());
         //curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, (curl_off_t)100000);
         // TODO REVISIT SO SEARCH IS CONFIGURABLE
@@ -157,16 +158,20 @@ bool curl_manager::check_config_file(const std::string config_path) {
 
 void curl_manager::log_download_data() {
     CURLcode ret;
-    // TODO REVISIT WHEN LOG EXISTS
+    Logger& logger = Logger::GetLogger();
+    std::string log;
+
     // Get download size
     curl_off_t down_data;
     ret = curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD_T, &down_data);
     if (ret == CURLE_OK) {
-        std::cout << "Downloaded: " << down_data << " bytes\n";
+        log = "Downloaded: " + std::to_string(down_data) + " bytes";
+        logger.CreateMessage(log);
     }
     curl_off_t speed_data;
     ret = curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD_T, &speed_data);
-        if (ret == CURLE_OK) {
-        std::cout << "Download speed: " << speed_data << " bytes/sec\n";
+    if (ret == CURLE_OK) {
+        log = "Download speed: " + std::to_string(speed_data) + " bytes/sec";
+        logger.CreateMessage(log);
     }
 }
