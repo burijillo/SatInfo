@@ -1,1 +1,1 @@
-#include "MainPage/mainPage.h"
+#include "MainPage/MainApp.h"

@@ -1,29 +1,11 @@
-#include "Frame.h"
+#include "MainWindow.h"
 
-/*Frame::Frame()
-    : wxFrame(NULL, wxID_ANY, "Hello World")
-{
-    wxMenu *menuFile = new wxMenu;
-    menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
-                     "Help string shown in status bar for this menu item");
-    menuFile->AppendSeparator();
-    menuFile->Append(wxID_EXIT);
-    wxMenu *menuHelp = new wxMenu;
-    menuHelp->Append(wxID_ABOUT);
-    wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append(menuFile, "&File");
-    menuBar->Append(menuHelp, "&Help");
-    SetMenuBar( menuBar );
-    CreateStatusBar();
-    std::string test_0 = "Pacotes";
-    std::string test = generateHelloString(test_0);
-    SetStatusText(test);
-    Bind(wxEVT_MENU, &Frame::OnHello, this, ID_Hello);
-    Bind(wxEVT_MENU, &Frame::OnAbout, this, wxID_ABOUT);
-    Bind(wxEVT_MENU, &Frame::OnExit, this, wxID_EXIT);
-}*/
+wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
+    EVT_AUI_PANE_CLOSE(MainWindow::OnPaneClose)
+    EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
+wxEND_EVENT_TABLE()
 
-Frame::Frame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
         : wxFrame(parent, id, title, pos, size, style)
 {
     // tell wxAuiManager to manage this frame
@@ -37,6 +19,17 @@ Frame::Frame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoi
 
     //----------------- TEST ---------------------------
 
+    wxMenu* help_menu = new wxMenu;
+    help_menu->Append(wxID_ABOUT);
+
+    wxMenuBar* mb = new wxMenuBar;
+    mb->Append(help_menu, _("&Help"));
+    SetMenuBar(mb);
+
+    Logger& logger = Logger::GetLogger();
+    log_view = wxSharedPtr<LogView>(new LogView());
+    log_view->setLogTextCtrl(this);
+
     // Give this pane an icon, too, just for testing.
     int iconSize = m_mgr.GetArtProvider()->GetMetric(wxAUI_DOCKART_CAPTION_SIZE);
 
@@ -44,12 +37,8 @@ Frame::Frame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoi
     iconSize &= ~1;
 
     // Create a text control
-    wxWindow* wnd10 = CreateTextCtrl("This pane will prompt the user before hiding.");
-    m_mgr.AddPane(wnd10, wxAuiPaneInfo().Name("test10").Caption("Text Pane with Hide Prompt").Bottom().Layer(1).Position(1).Icon(wxArtProvider::GetBitmap(wxART_WARNING, wxART_OTHER, wxSize(iconSize, iconSize))));
-
-    wxTextCtrl* testin = (wxTextCtrl*)wnd10;
-    std::string hey = "\n\nAlohaaaa";
-    (*testin) << hey;
+    wxSharedPtr<wxTextCtrl> wnd10 = log_view->getLogTextCtrl();
+    m_mgr.AddPane(wnd10.get(), wxAuiPaneInfo().Name("test10").Caption("SatInfo Log").Bottom().Layer(1).Position(1).Icon(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER, wxSize(iconSize, iconSize))));
 
     m_mgr.GetPane("test10").Show().Bottom().Layer(0).Row(0).Position(0);
     m_mgr.Update();
@@ -398,31 +387,32 @@ Frame::Frame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoi
     m_mgr.Update();*/
 }
 
-wxTextCtrl* Frame::CreateTextCtrl(const wxString& ctrl_text)
-{
-    static int n = 0;
-
-    wxString text;
-    if ( !ctrl_text.empty() )
-        text = ctrl_text;
-    else
-        text.Printf("This is text box %d", ++n);
-
-    return new wxTextCtrl(this,wxID_ANY, text,
-                          wxPoint(0,0), FromDIP(wxSize(150,90)),
-                          wxNO_BORDER | wxTE_MULTILINE);
-}
-
-void Frame::OnExit(wxCommandEvent& event)
+void MainWindow::OnExit(wxCommandEvent& event)
 {
     Close(true);
 }
-void Frame::OnAbout(wxCommandEvent& event)
+
+// TODO THIS ABOUT BUTTON ONLY SERVES FOR BRINGING THE CLOSED LOG WINDOW
+void MainWindow::OnAbout(wxCommandEvent& event)
 {
-    wxMessageBox("This is a wxWidgets Hello World example",
-                 "About Hello World", wxOK | wxICON_INFORMATION);
+    //wxMessageBox("This is a wxWidgets Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
+    
+    wxAuiPaneInfo &logPaneInfo = m_mgr.GetPane("test10");
+    if (!logPaneInfo.IsShown()) {
+        logPaneInfo.Show();
+        m_mgr.Update();
+    }
 }
-void Frame::OnHello(wxCommandEvent& event)
+
+void MainWindow::OnHello(wxCommandEvent& event)
 {
     wxLogMessage("Hello world from wxWidgets!");
+}
+
+void MainWindow::OnPaneClose(wxAuiManagerEvent& event)
+{
+    if (event.pane->name == "test10")
+    {
+        event.pane->Hide();
+    }
 }

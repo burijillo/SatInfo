@@ -3,7 +3,6 @@
 LogView::LogView ()
 {
    Logger& logger_ = Logger::GetLogger ();
-   //logger_ = Logger::GetLogger ();
    std::cout << "Log view session starts\n";
    logger_.Attach (this);
 }
@@ -11,6 +10,12 @@ LogView::LogView ()
 LogView::~LogView ()
 {
    std::cout << "Log view session ends\n";
+}
+
+void LogView::setLogTextCtrl(wxWindow* parent)
+{
+   logTextCtrl = new wxTextCtrl(parent, wxID_ANY, "[LOG]: Log initialization", wxPoint(0,0), parent->FromDIP(wxSize(150, 90)), wxNO_BORDER | wxTE_MULTILINE);
+   logTextCtrl->SetModified(false);
 }
 
 void LogView::Update (const std::string& message_from_logger)
@@ -28,5 +33,5 @@ void LogView::RemoveLogViewFromLogger ()
 
 void LogView::PrintInfo ()
 {
-   std::cout << "[LOG]: " << this->message_from_logger_ << "\n";
+   (*logTextCtrl) << "[LOG]: " << message_from_logger_ << "\n";
 }

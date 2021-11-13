@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.11-3.18)
 
 project(Frontend_lib)
 
-add_library(Frontend_lib Frontend_entryPoint.cpp MainPage/mainPage.cpp Res/Frame.cpp LogView/LogView.cpp)
+add_library(Frontend_lib 
+    Frontend_entryPoint.cpp
+    MainPage/MainApp.cpp
+    MainPage/MainWindow.cpp
+    LogView/LogView.cpp)
 
 add_subdirectory(MainPage)
 add_subdirectory(Res)
