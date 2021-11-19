@@ -26,6 +26,7 @@ private:
       {LOG_TYPE::SYS_ERR, "[SYSTEM ERROR]"}
    };
    std::string getTagFromMap(LOG_TYPE logType);
+   std::string msgConstructor(std::string msg, LOG_TYPE log_type);
 
    std::string messageFromLogger_;
    LOG_TYPE logTypeFromLogger_;

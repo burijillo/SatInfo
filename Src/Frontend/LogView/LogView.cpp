@@ -14,7 +14,8 @@ LogView::~LogView ()
 
 void LogView::setLogTextCtrl(wxWindow* parent)
 {
-   logTextCtrl = new wxTextCtrl(parent, wxID_ANY, "[LOG]: Log initialization\n", wxPoint(0,0), parent->FromDIP(wxSize(150, 90)), wxNO_BORDER | wxTE_MULTILINE);
+   std::string initMsg = msgConstructor("Log initialization", LOG_TYPE::LOG);
+   logTextCtrl = new wxTextCtrl(parent, wxID_ANY, initMsg, wxPoint(0,0), parent->FromDIP(wxSize(150, 90)), wxNO_BORDER | wxTE_MULTILINE);
    logTextCtrl->SetModified(false);
 }
 
@@ -32,9 +33,19 @@ void LogView::RemoveLogViewFromLogger ()
    std::cout << "Log view removed from logger\n";
 }
 
+std::string LogView::msgConstructor(std::string msg, LOG_TYPE logType)
+{
+   std::string result = "";
+
+   result = getTagFromMap(logType) + " : " + msg + "\n";
+
+   return result;
+}
+
 void LogView::PrintInfo ()
 {
-   (*logTextCtrl) << getTagFromMap(logTypeFromLogger_) << " : " << messageFromLogger_ << "\n";
+   std::string msg = msgConstructor(messageFromLogger_, logTypeFromLogger_);
+   (*logTextCtrl) << msg;
 }
 
 std::string LogView::getTagFromMap(LOG_TYPE logType)
