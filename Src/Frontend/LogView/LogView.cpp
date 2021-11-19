@@ -14,7 +14,7 @@ LogView::~LogView ()
 
 void LogView::setLogTextCtrl(wxWindow* parent)
 {
-   logTextCtrl = new wxTextCtrl(parent, wxID_ANY, "[LOG]: Log initialization", wxPoint(0,0), parent->FromDIP(wxSize(150, 90)), wxNO_BORDER | wxTE_MULTILINE);
+   logTextCtrl = new wxTextCtrl(parent, wxID_ANY, "[LOG]: Log initialization\n", wxPoint(0,0), parent->FromDIP(wxSize(150, 90)), wxNO_BORDER | wxTE_MULTILINE);
    logTextCtrl->SetModified(false);
 }
 
