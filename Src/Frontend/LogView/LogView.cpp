@@ -18,9 +18,10 @@ void LogView::setLogTextCtrl(wxWindow* parent)
    logTextCtrl->SetModified(false);
 }
 
-void LogView::Update (const std::string& message_from_logger)
+void LogView::Update (const std::string& messageFromLogger, LOG_TYPE logTypeFromLogger)
 {
-   message_from_logger_ = message_from_logger;
+   messageFromLogger_ = messageFromLogger;
+   logTypeFromLogger_ = logTypeFromLogger;
    PrintInfo ();
 }
 
@@ -33,5 +34,19 @@ void LogView::RemoveLogViewFromLogger ()
 
 void LogView::PrintInfo ()
 {
-   (*logTextCtrl) << "[LOG]: " << message_from_logger_ << "\n";
+   (*logTextCtrl) << getTagFromMap(logTypeFromLogger_) << " : " << messageFromLogger_ << "\n";
+}
+
+std::string LogView::getTagFromMap(LOG_TYPE logType)
+{
+   std::string result = "";
+
+   for (auto item:logTypeMap){
+      if (item.first == logType){
+         result = item.second;
+         return result;
+      }
+   }
+   result = logTypeMap[LOG_TYPE::SYS_ERR];
+   return result;   
 }

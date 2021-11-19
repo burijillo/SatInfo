@@ -12,7 +12,7 @@ public:
    LogView ();
    virtual ~LogView ();
 
-   void Update (const std::string& message_from_logger) override;
+   void Update (const std::string& messageFromLogger, LOG_TYPE logType) override;
    void RemoveLogViewFromLogger ();
    void PrintInfo ();
 
@@ -20,7 +20,15 @@ public:
    void setLogTextCtrl(wxWindow* parent);
 
 private:
-   std::string message_from_logger_;
+   std::map<LOG_TYPE, std::string> logTypeMap {
+      {LOG_TYPE::LOG, "[LOG]"},
+      {LOG_TYPE::PARSER, "[PARSER]"},
+      {LOG_TYPE::SYS_ERR, "[SYSTEM ERROR]"}
+   };
+   std::string getTagFromMap(LOG_TYPE logType);
+
+   std::string messageFromLogger_;
+   LOG_TYPE logTypeFromLogger_;
 
    wxSharedPtr<wxTextCtrl> logTextCtrl;
 };

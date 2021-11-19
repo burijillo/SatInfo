@@ -46,10 +46,10 @@ bool curl_manager::curl_auth(const std::string cookies_path, const std::string c
         if (ret == CURLE_OK){
             ret = curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies);
             if(ret == CURLE_OK && cookies) {
-                logger.CreateMessage("COOKIES");
+                logger.CreateMessage("COOKIES", IObserver::LOG_TYPE::LOG);
                 struct curl_slist *each = cookies;
                 while(each) {
-                    logger.CreateMessage(each->data);
+                    logger.CreateMessage(each->data, IObserver::LOG_TYPE::LOG);
                     each = each->next;
                 }
                 curl_slist_free_all(cookies);
@@ -166,12 +166,12 @@ void curl_manager::log_download_data() {
     ret = curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD_T, &down_data);
     if (ret == CURLE_OK) {
         log = "Downloaded: " + std::to_string(down_data) + " bytes";
-        logger.CreateMessage(log);
+        logger.CreateMessage(log, IObserver::LOG_TYPE::LOG);
     }
     curl_off_t speed_data;
     ret = curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD_T, &speed_data);
     if (ret == CURLE_OK) {
         log = "Download speed: " + std::to_string(speed_data) + " bytes/sec";
-        logger.CreateMessage(log);
+        logger.CreateMessage(log, IObserver::LOG_TYPE::LOG);
     }
 }

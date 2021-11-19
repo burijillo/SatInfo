@@ -30,13 +30,14 @@ void Logger::Notify ()
 {
    std::list<IObserver*>::iterator iter = list_observers.begin ();
    while (iter != list_observers.end ()) {
-      (*iter)->Update (message);
+      (*iter)->Update (message, logType);
       ++iter;
    }
 }
 
-void Logger::CreateMessage (std::string message)
+void Logger::CreateMessage (std::string message, IObserver::LOG_TYPE logType)
 {
    this->message = message;
+   this->logType = logType;
    Notify ();
 }

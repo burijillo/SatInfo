@@ -13,11 +13,11 @@ DataParser::DataParser()
             if (checkIfDataFileExists(dataFileName)){
                 existingDataFileNames.push_back(dataFileName);
                 std::string logMsg = "Add " + item + " to dataFile set";
-                logger.CreateMessage(logMsg);
+                logger.CreateMessage(logMsg, IObserver::LOG_TYPE::PARSER);
             }
         }
     } else {
-        logger.CreateMessage(path + " doesnt exist!");
+        logger.CreateMessage(path + " doesnt exist!", IObserver::LOG_TYPE::PARSER);
     }
 }
 

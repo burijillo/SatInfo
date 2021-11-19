@@ -1,6 +1,7 @@
 #pragma once
 #include "../Interfaces/ISubject.h"
 #include <list>
+#include <map>
 
 class Logger : public ISubject
 {
@@ -14,7 +15,7 @@ public:
    void Dettach (IObserver* observer) override;
    void Notify () override;
 
-   void CreateMessage (std::string message = "Empty");
+   void CreateMessage (std::string message, IObserver::LOG_TYPE logType);
 
 private:
    //static Logger* logger;
@@ -22,4 +23,5 @@ private:
 
    std::list<IObserver*> list_observers;
    std::string message;
+   IObserver::LOG_TYPE logType;
 };
