@@ -36,10 +36,17 @@ bool DataParser::parseBoxCat()
         jParser = nlohmann::json::parse(fs);
 
         for (auto it = jParser.begin(); it != jParser.end(); ++it) {
-            if (!it.value().at("COUNTRY").is_null()) {
-                std::cout << it.value().at("COUNTRY") << std::endl;
+            if (!it.value().at(boxCatProp[0]).is_null()) {
+                BoxCat boxCat(it.value().at(boxCatProp[0]));
+                boxCatVec.push_back(boxCat);
             }
         }
+
+        Logger logger = Logger::GetLogger();
+        std::string boxCatSize = "";
+        boxCatSize = "Number of countries/orgs: " + std::to_string(boxCatVec.size());
+        logger.CreateMessage(boxCatSize, IObserver::LOG_TYPE::PARSER);
+
     } else {
         result = false;
     }

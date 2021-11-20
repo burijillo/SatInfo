@@ -3,7 +3,8 @@
 #include <iostream>
 #include <string>
 #include "curl/curl_manager.h"
-#include "DataParser/DataParser.h"
+#include "Data/DataParser.h"
+#include "Data/DataSets/BoxCat.h"
 #include "Interfaces/IObserver.h"
 #include "Log/Logger.h"
 

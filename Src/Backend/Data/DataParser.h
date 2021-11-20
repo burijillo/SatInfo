@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "../Log/Logger.h"
+#include "DataSets/BoxCat.h"
 
 class DataParser
 {
@@ -18,6 +19,8 @@ private:
     bool isCookiesADirectory = false;
     std::vector<std::string> existingDataFileNames;
     std::string dataPath;
+
+    std::vector<BoxCat> boxCatVec;
 
     bool checkIfDataFileExists(std::string fileName);
 };
