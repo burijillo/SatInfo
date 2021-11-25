@@ -47,13 +47,20 @@ bool DataParser::parseBoxCat()
         boxCatSize = "Number of countries/orgs: " + std::to_string(boxCat.getSize());
         logger.CreateMessage(boxCatSize, IObserver::LOG_TYPE::PARSER);
 
-        int count = 0;
-        std::vector<BoxUnit> boxCatVec = boxCat.getBoxCatVec();
+        /*std::vector<BoxUnit> boxCatVec = boxCat.getBoxCatVec();
         for (auto item:boxCatVec){
             std::string test = item.country;
             logger.CreateMessage("COUNTRY ID " + std::to_string(item.id) + " : " + test, IObserver::LOG_TYPE::PARSER);
-            count++;
+        }*/
+        for (int i = 0; i < boxCat.getSize() + 2; i++){
+            BoxUnit boxUnit = boxCat.getBoxUnit(i);
+            if (boxUnit.isValid) {
+                logger.CreateMessage("COUNTRY ID " + std::to_string(boxUnit.id) + " : " + boxUnit.country, IObserver::LOG_TYPE::PARSER);
+            } else {
+                logger.CreateMessage("ERROR MASEMO", IObserver::LOG_TYPE::SYS_ERR);
+            }
         }
+
 
     } else {
         result = false;

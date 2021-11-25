@@ -27,6 +27,17 @@ public:
         setSize(static_cast<unsigned int>(BoxCatVec.size()));
     }
 
+    BoxUnit getBoxUnit(int index) {
+        BoxUnit result;
+        if (index > getSize()){
+            result.isValid = false;
+            return result;
+        } else {
+            result = BoxCatVec[index];
+        }
+        return result;
+    }
+
     std::vector<BoxUnit> getBoxCatVec() { return BoxCatVec; }
 
 private:

@@ -2,6 +2,7 @@
 
 struct GenericUnit {
     unsigned int id;
+    bool isValid = true;
 };
 
 class GenericCat
