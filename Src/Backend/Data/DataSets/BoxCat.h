@@ -14,8 +14,6 @@ struct BoxUnit : public GenericUnit
     std::string country;
 };
 
-//inline GenericCat::~GenericCat() {}
-
 class BoxCat : public GenericCat
 {
 public:
