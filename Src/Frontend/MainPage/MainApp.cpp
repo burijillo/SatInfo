@@ -1,4 +1,6 @@
 #include "MainApp.h"
+#include <chrono>
+#include <thread>
 
 bool MainApp::OnInit()
 {
@@ -9,8 +11,9 @@ bool MainApp::OnInit()
 
     // TEST
     dataParser.parseBoxCat();
-    curl_manager curlManager;
-    curlManager.download_data(curl_manager::download_type::CURRENT_DATA);
+    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    //curl_manager curlManager;
+    //curlManager.download_data(curl_manager::download_type::CURRENT_DATA);
 
     // END TEST
     

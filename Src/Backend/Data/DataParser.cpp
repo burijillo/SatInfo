@@ -37,15 +37,23 @@ bool DataParser::parseBoxCat()
 
         for (auto it = jParser.begin(); it != jParser.end(); ++it) {
             if (!it.value().at(boxCatProp[0]).is_null()) {
-                BoxCat boxCat(it.value().at(boxCatProp[0]));
-                boxCatVec.push_back(boxCat);
+                std::string country = it.value().at(boxCatProp[0]);
+                boxCat.setnNewItem(country);
             }
         }
 
         Logger logger = Logger::GetLogger();
         std::string boxCatSize = "";
-        boxCatSize = "Number of countries/orgs: " + std::to_string(boxCatVec.size());
+        boxCatSize = "Number of countries/orgs: " + std::to_string(boxCat.getSize());
         logger.CreateMessage(boxCatSize, IObserver::LOG_TYPE::PARSER);
+
+        int count = 0;
+        std::vector<BoxUnit> boxCatVec = boxCat.getBoxCatVec();
+        for (auto item:boxCatVec){
+            std::string test = item.country;
+            logger.CreateMessage("COUNTRY ID " + std::to_string(item.id) + " : " + test, IObserver::LOG_TYPE::PARSER);
+            count++;
+        }
 
     } else {
         result = false;

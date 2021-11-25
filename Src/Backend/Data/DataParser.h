@@ -20,7 +20,7 @@ private:
     std::vector<std::string> existingDataFileNames;
     std::string dataPath;
 
-    std::vector<BoxCat> boxCatVec;
+    BoxCat boxCat;
 
     bool checkIfDataFileExists(std::string fileName);
 };
