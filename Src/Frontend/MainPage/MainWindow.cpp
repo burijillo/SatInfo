@@ -3,11 +3,16 @@
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
     EVT_AUI_PANE_CLOSE(MainWindow::OnPaneClose)
     EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
+    EVT_MENU(wxID_VIEW_DETAILS, MainWindow::OnShowLog)
+    EVT_MENU(BOXDATA_ID, MainWindow::OnBoxDataLoad)
 wxEND_EVENT_TABLE()
 
-MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-        : wxFrame(parent, id, title, pos, size, style)
-{
+MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
+    DataParser _dataParser, const wxPoint &pos, const wxSize &size, long style)
+    : wxFrame(parent, id, title, pos, size, style) {
+
+    dataParser = _dataParser;
+
     // tell wxAuiManager to manage this frame
     m_mgr.SetManagedWindow(this);
 
@@ -19,14 +24,24 @@ MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, c
 
     //----------------- TEST ---------------------------
 
-    wxMenu* help_menu = new wxMenu;
+    wxMenu *data_menu = new wxMenu;
+    data_menu->Append(BOXDATA_ID, "Load BoxCat Data");
+
+    wxMenu *view_menu = new wxMenu;
+    view_menu->AppendCheckItem(wxID_VIEW_DETAILS, "Show Log");
+    view_menu->FindItem(wxID_VIEW_DETAILS)->Check(true);
+
+    wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_ABOUT);
 
-    wxMenuBar* mb = new wxMenuBar;
+    wxMenuBar *mb = new wxMenuBar;
+    mb->Append(data_menu, _("&Data"));
+    mb->Append(view_menu, _("&View"));
     mb->Append(help_menu, _("&Help"));
     SetMenuBar(mb);
 
-    Logger& logger = Logger::GetLogger();
+    Logger &logger = Logger::GetLogger();
+
     log_view = wxSharedPtr<LogView>(new LogView());
     log_view->setLogTextCtrl(this);
 
@@ -38,7 +53,14 @@ MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, c
 
     // Create a text control
     wxSharedPtr<wxTextCtrl> wnd10 = log_view->getLogTextCtrl();
-    m_mgr.AddPane(wnd10.get(), wxAuiPaneInfo().Name("test10").Caption("SatInfo Log").Bottom().Layer(1).Position(1).Icon(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER, wxSize(iconSize, iconSize))));
+    m_mgr.AddPane(wnd10.get(), wxAuiPaneInfo()
+                                   .Name("test10")
+                                   .Caption("SatInfo Log")
+                                   .Bottom()
+                                   .Layer(1)
+                                   .Position(1)
+                                   .Icon(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER,
+                                       wxSize(iconSize, iconSize))));
 
     m_mgr.GetPane("test10").Show().Bottom().Layer(0).Row(0).Position(0);
     m_mgr.Update();
@@ -169,11 +191,11 @@ MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, c
 
 
     wxAuiToolBar* tb2 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                         wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_OVERFLOW | wxAUI_TB_HORIZONTAL);
-    tb2->SetToolBitmapSize(FromDIP(wxSize(16,16)));
+                                         wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_OVERFLOW |
+    wxAUI_TB_HORIZONTAL); tb2->SetToolBitmapSize(FromDIP(wxSize(16,16)));
 
-    wxBitmap tb2_bmp1 = wxArtProvider::GetBitmap(wxART_QUESTION, wxART_OTHER, FromDIP(wxSize(16,16)));
-    tb2->AddTool(ID_SampleItem+6, "Disabled", tb2_bmp1);
+    wxBitmap tb2_bmp1 = wxArtProvider::GetBitmap(wxART_QUESTION, wxART_OTHER,
+    FromDIP(wxSize(16,16))); tb2->AddTool(ID_SampleItem+6, "Disabled", tb2_bmp1);
     tb2->AddTool(ID_SampleItem+7, "Test", tb2_bmp1);
     tb2->AddTool(ID_SampleItem+8, "Test", tb2_bmp1);
     tb2->AddTool(ID_SampleItem+9, "Test", tb2_bmp1);
@@ -203,10 +225,10 @@ MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, c
     tb3->AddTool(ID_SampleItem+21, "Radio 2", tb3_bmp1, "Radio 2", wxITEM_RADIO);
     tb3->AddTool(ID_SampleItem+22, "Radio 3", tb3_bmp1, "Radio 3", wxITEM_RADIO);
     tb3->AddSeparator();
-    tb3->AddTool(ID_SampleItem+23, "Radio 1 (Group 2)", tb3_bmp1, "Radio 1 (Group 2)", wxITEM_RADIO);
-    tb3->AddTool(ID_SampleItem+24, "Radio 2 (Group 2)", tb3_bmp1, "Radio 2 (Group 2)", wxITEM_RADIO);
-    tb3->AddTool(ID_SampleItem+25, "Radio 3 (Group 2)", tb3_bmp1, "Radio 3 (Group 2)", wxITEM_RADIO);
-    tb3->SetCustomOverflowItems(prepend_items, append_items);
+    tb3->AddTool(ID_SampleItem+23, "Radio 1 (Group 2)", tb3_bmp1, "Radio 1 (Group 2)",
+    wxITEM_RADIO); tb3->AddTool(ID_SampleItem+24, "Radio 2 (Group 2)", tb3_bmp1, "Radio 2 (Group
+    2)", wxITEM_RADIO); tb3->AddTool(ID_SampleItem+25, "Radio 3 (Group 2)", tb3_bmp1, "Radio 3
+    (Group 2)", wxITEM_RADIO); tb3->SetCustomOverflowItems(prepend_items, append_items);
     tb3->Realize();
 
 
@@ -216,8 +238,8 @@ MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, c
                                          wxAUI_TB_TEXT |
                                          wxAUI_TB_HORZ_TEXT);
     tb4->SetToolBitmapSize(FromDIP(wxSize(16,16)));
-    wxBitmap tb4_bmp1 = wxArtProvider::GetBitmap(wxART_NORMAL_FILE, wxART_OTHER, FromDIP(wxSize(16,16)));
-    tb4->AddTool(ID_DropDownToolbarItem, "Item 1", tb4_bmp1);
+    wxBitmap tb4_bmp1 = wxArtProvider::GetBitmap(wxART_NORMAL_FILE, wxART_OTHER,
+    FromDIP(wxSize(16,16))); tb4->AddTool(ID_DropDownToolbarItem, "Item 1", tb4_bmp1);
     tb4->AddTool(ID_SampleItem+23, "Item 2", tb4_bmp1);
     tb4->SetToolSticky(ID_SampleItem+23, true);
     tb4->AddTool(ID_SampleItem+24, "Disabled", tb4_bmp1);
@@ -238,8 +260,8 @@ MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, c
 
 
     wxAuiToolBar* tb5 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                         wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_OVERFLOW | wxAUI_TB_VERTICAL);
-    tb5->SetToolBitmapSize(FromDIP(wxSize(48,48)));
+                                         wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_OVERFLOW |
+    wxAUI_TB_VERTICAL); tb5->SetToolBitmapSize(FromDIP(wxSize(48,48)));
     tb5->AddTool(ID_SampleItem+30, "Test", wxArtProvider::GetBitmap(wxART_ERROR));
     tb5->AddSeparator();
     tb5->AddTool(ID_SampleItem+31, "Test", wxArtProvider::GetBitmap(wxART_QUESTION));
@@ -387,32 +409,48 @@ MainWindow::MainWindow(wxWindow* parent, wxWindowID id, const wxString& title, c
     m_mgr.Update();*/
 }
 
-void MainWindow::OnExit(wxCommandEvent& event)
-{
-    Close(true);
+void MainWindow::OnExit(wxCommandEvent &event) { Close(true); }
+
+void MainWindow::OnBoxDataLoad(wxCommandEvent &event) {
+    // Check if boxCat was already loaded
+    if(!this->dataParser.getBoxCatLoaded()) {
+        this->dataParser.parseBoxCat();
+    }
+}
+
+void MainWindow::OnShowLog(wxCommandEvent &event) {
+    bool isChecked = event.IsChecked();
+
+    wxAuiPaneInfo &logPaneInfo = m_mgr.GetPane("test10");
+    if(isChecked) {
+        if(!logPaneInfo.IsShown()) {
+            logPaneInfo.Show();
+            m_mgr.Update();
+        }
+    } else {
+        if(logPaneInfo.IsShown()) {
+            logPaneInfo.Hide();
+            m_mgr.Update();
+        }
+    }
 }
 
 // TODO THIS ABOUT BUTTON ONLY SERVES FOR BRINGING THE CLOSED LOG WINDOW
-void MainWindow::OnAbout(wxCommandEvent& event)
-{
-    //wxMessageBox("This is a wxWidgets Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
-    
+void MainWindow::OnAbout(wxCommandEvent &event) {
+    // wxMessageBox("This is a wxWidgets Hello World example", "About Hello World", wxOK |
+    // wxICON_INFORMATION);
+
     wxAuiPaneInfo &logPaneInfo = m_mgr.GetPane("test10");
-    if (!logPaneInfo.IsShown()) {
+    if(!logPaneInfo.IsShown()) {
         logPaneInfo.Show();
         m_mgr.Update();
     }
 }
 
-void MainWindow::OnHello(wxCommandEvent& event)
-{
-    wxLogMessage("Hello world from wxWidgets!");
-}
+void MainWindow::OnHello(wxCommandEvent &event) { wxLogMessage("Hello world from wxWidgets!"); }
 
-void MainWindow::OnPaneClose(wxAuiManagerEvent& event)
-{
-    if (event.pane->name == "test10")
-    {
+void MainWindow::OnPaneClose(wxAuiManagerEvent &event) {
+    if(event.pane->name == "test10") {
         event.pane->Hide();
     }
 }
