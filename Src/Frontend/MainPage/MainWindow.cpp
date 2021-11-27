@@ -54,7 +54,7 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
     // Create a text control
     wxSharedPtr<wxTextCtrl> wnd10 = log_view->getLogTextCtrl();
     m_mgr.AddPane(wnd10.get(), wxAuiPaneInfo()
-                                   .Name("test10")
+                                   .Name("logPane")
                                    .Caption("SatInfo Log")
                                    .Bottom()
                                    .Layer(1)
@@ -62,7 +62,7 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
                                    .Icon(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER,
                                        wxSize(iconSize, iconSize))));
 
-    m_mgr.GetPane("test10").Show().Bottom().Layer(0).Row(0).Position(0);
+    m_mgr.GetPane("logPane").Show().Bottom().Layer(0).Row(0).Position(0);
     m_mgr.Update();
 
     //----------------- END TEST ---------------------------
@@ -421,7 +421,7 @@ void MainWindow::OnBoxDataLoad(wxCommandEvent &event) {
 void MainWindow::OnShowLog(wxCommandEvent &event) {
     bool isChecked = event.IsChecked();
 
-    wxAuiPaneInfo &logPaneInfo = m_mgr.GetPane("test10");
+    wxAuiPaneInfo &logPaneInfo = m_mgr.GetPane("logPane");
     if(isChecked) {
         if(!logPaneInfo.IsShown()) {
             logPaneInfo.Show();
@@ -437,20 +437,15 @@ void MainWindow::OnShowLog(wxCommandEvent &event) {
 
 // TODO THIS ABOUT BUTTON ONLY SERVES FOR BRINGING THE CLOSED LOG WINDOW
 void MainWindow::OnAbout(wxCommandEvent &event) {
-    // wxMessageBox("This is a wxWidgets Hello World example", "About Hello World", wxOK |
-    // wxICON_INFORMATION);
-
-    wxAuiPaneInfo &logPaneInfo = m_mgr.GetPane("test10");
-    if(!logPaneInfo.IsShown()) {
-        logPaneInfo.Show();
-        m_mgr.Update();
-    }
+    wxMessageBox(
+        "This is a wxWidgets Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
 }
 
 void MainWindow::OnHello(wxCommandEvent &event) { wxLogMessage("Hello world from wxWidgets!"); }
 
 void MainWindow::OnPaneClose(wxAuiManagerEvent &event) {
-    if(event.pane->name == "test10") {
-        event.pane->Hide();
+    if(event.pane->name == "logPane") {
+        wxMenuBar *mb = GetMenuBar();
+        mb->GetMenu(1)->FindItem(wxID_VIEW_DETAILS)->Check(false);
     }
 }
