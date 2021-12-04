@@ -4,8 +4,8 @@
 
 bool MainApp::OnInit() {
     DataParser dataParser;
-    wxFrame *  mainWindow = new MainWindow(nullptr, wxID_ANY, "SatInfo v0.1", dataParser,
-        wxDefaultPosition, wxWindow::FromDIP(wxSize(1000, 800), NULL));
+    mainWindow = new MainWindow(nullptr, wxID_ANY, "SatInfo v0.1", dataParser, wxDefaultPosition,
+        wxWindow::FromDIP(wxSize(1000, 800), NULL));
     mainWindow->Show(true);
 
     // TEST
@@ -16,4 +16,9 @@ bool MainApp::OnInit() {
     // END TEST
 
     return true;
+}
+
+int MainApp::OnExit() {
+    std::cout << "END APP\n";
+    return 0;
 }

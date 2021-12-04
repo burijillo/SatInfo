@@ -88,6 +88,8 @@ bool DataParser::parseBoxCat() {
                     logger.CreateMessage("COUNTRY " + std::to_string(boxUnit.id) + " : " +
                                              boxUnit.country + " - " + boxUnit.spadoc_cd,
                         IObserver::LOG_TYPE::PARSER);
+
+                    boxCatNameVec.push_back(boxCat.getName(i));
                 } else {
                     logger.CreateMessage("ERROR MASEMO", IObserver::LOG_TYPE::SYS_ERR);
                 }

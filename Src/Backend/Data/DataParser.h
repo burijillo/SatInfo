@@ -9,8 +9,9 @@ class DataParser {
 public:
     DataParser();
 
-    bool getBoxCatLoaded() { return isBoxCatLoaded; }
-    bool parseBoxCat();
+    bool                     getBoxCatLoaded() { return isBoxCatLoaded; }
+    bool                     parseBoxCat();
+    std::vector<std::string> getBoxCatNameVec() { return boxCatNameVec; }
 
 private:
     // Data filenames
@@ -19,8 +20,9 @@ private:
     std::vector<std::string> existingDataFileNames;
     std::string              dataPath;
 
-    bool   isBoxCatLoaded = false;
-    BoxCat boxCat;
+    bool                     isBoxCatLoaded = false;
+    BoxCat                   boxCat;
+    std::vector<std::string> boxCatNameVec;
 
     bool checkIfDataFileExists(std::string fileName);
 };

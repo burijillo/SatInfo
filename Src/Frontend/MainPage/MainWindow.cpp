@@ -24,17 +24,18 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
 
     //----------------- TEST ---------------------------
 
-    wxMenu *data_menu = new wxMenu;
-    data_menu->Append(BOXDATA_ID, "Load BoxCat Data");
+    data_menu = new wxMenu();
 
-    wxMenu *view_menu = new wxMenu;
+    (data_menu)->Append(BOXDATA_ID, "Load BoxCat Data");
+
+    view_menu = new wxMenu();
     view_menu->AppendCheckItem(wxID_VIEW_DETAILS, "Show Log");
     view_menu->FindItem(wxID_VIEW_DETAILS)->Check(true);
 
-    wxMenu *help_menu = new wxMenu;
+    help_menu = new wxMenu();
     help_menu->Append(wxID_ABOUT);
 
-    wxMenuBar *mb = new wxMenuBar;
+    mb = new wxMenuBar;
     mb->Append(data_menu, _("&Data"));
     mb->Append(view_menu, _("&View"));
     mb->Append(help_menu, _("&Help"));
@@ -45,6 +46,9 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
     log_view = wxSharedPtr<LogView>(new LogView());
     log_view->setLogTextCtrl(this);
 
+    data_tree_view = wxSharedPtr<DataTreeView>(new DataTreeView());
+    data_tree_view->setDataTreeViewCtrl(this);
+
     // Give this pane an icon, too, just for testing.
     int iconSize = m_mgr.GetArtProvider()->GetMetric(wxAUI_DOCKART_CAPTION_SIZE);
 
@@ -52,17 +56,28 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
     iconSize &= ~1;
 
     // Create a text control
-    wxSharedPtr<wxTextCtrl> wnd10 = log_view->getLogTextCtrl();
-    m_mgr.AddPane(wnd10.get(), wxAuiPaneInfo()
-                                   .Name("logPane")
-                                   .Caption("SatInfo Log")
-                                   .Bottom()
-                                   .Layer(1)
-                                   .Position(1)
-                                   .Icon(wxArtProvider::GetBitmap(wxART_INFORMATION, wxART_OTHER,
-                                       wxSize(iconSize, iconSize))));
+    m_mgr.AddPane(
+        log_view->getLogTextCtrl().get(), wxAuiPaneInfo()
+                                              .Name("logPane")
+                                              .Caption("SatInfo Log")
+                                              .Bottom()
+                                              .Layer(1)
+                                              .Position(1)
+                                              .Icon(wxArtProvider::GetBitmap(wxART_INFORMATION,
+                                                  wxART_OTHER, wxSize(iconSize, iconSize))));
+
+    m_mgr.AddPane(data_tree_view->getDataTreeViewCtrl().get(),
+        wxAuiPaneInfo()
+            .Name("dataTreeViewPane")
+            .Caption("SatInfo TreeView")
+            .Left()
+            .Layer(1)
+            .Position(1)
+            .Icon(wxArtProvider::GetBitmap(
+                wxART_INFORMATION, wxART_OTHER, wxSize(iconSize, iconSize))));
 
     m_mgr.GetPane("logPane").Show().Bottom().Layer(0).Row(0).Position(0);
+    m_mgr.GetPane("dataTreeViewPane").Show().Left().Layer(0).Row(0).Position(0);
     m_mgr.Update();
 
     //----------------- END TEST ---------------------------
@@ -415,6 +430,9 @@ void MainWindow::OnBoxDataLoad(wxCommandEvent &event) {
     // Check if boxCat was already loaded
     if(!this->dataParser.getBoxCatLoaded()) {
         this->dataParser.parseBoxCat();
+        for(auto item : this->dataParser.getBoxCatNameVec()) {
+            std::cout << item.data() << std::endl;
+        }
     }
 }
 
@@ -435,7 +453,7 @@ void MainWindow::OnShowLog(wxCommandEvent &event) {
     }
 }
 
-// TODO THIS ABOUT BUTTON ONLY SERVES FOR BRINGING THE CLOSED LOG WINDOW
+// TODO THIS ABOUT BUTTON
 void MainWindow::OnAbout(wxCommandEvent &event) {
     wxMessageBox(
         "This is a wxWidgets Hello World example", "About Hello World", wxOK | wxICON_INFORMATION);
@@ -445,7 +463,6 @@ void MainWindow::OnHello(wxCommandEvent &event) { wxLogMessage("Hello world from
 
 void MainWindow::OnPaneClose(wxAuiManagerEvent &event) {
     if(event.pane->name == "logPane") {
-        wxMenuBar *mb = GetMenuBar();
         mb->GetMenu(1)->FindItem(wxID_VIEW_DETAILS)->Check(false);
     }
 }

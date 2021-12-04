@@ -6,7 +6,8 @@ add_library(Frontend_lib
     Frontend_entryPoint.cpp
     MainPage/MainApp.cpp
     MainPage/MainWindow.cpp
-    LogView/LogView.cpp)
+    LogView/LogView.cpp
+    DataTreeView/DataTreeView.cpp)
 
 add_subdirectory(MainPage)
 add_subdirectory(Res)

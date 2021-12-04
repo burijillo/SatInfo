@@ -47,6 +47,10 @@ public:
         unit.decayed_total_count   = _decayed_total_count;
         unit.country_total         = _country_total;
 
+        // In BoxCat country is name and country_total represents elements
+        unit.name     = _country;
+        unit.elements = std::stoi(_country_total);
+
         BoxCatVec.push_back(unit);
         setSize(static_cast<unsigned int>(BoxCatVec.size()));
     }
@@ -61,6 +65,14 @@ public:
         }
         return result;
     }
+
+    std::string getName(int index) override {
+        std::string result = "";
+        if(index <= getSize()) {
+            result = BoxCatVec[index].name;
+        }
+        return result;
+    };
 
     std::vector<BoxUnit> getBoxCatVec() { return BoxCatVec; }
 
