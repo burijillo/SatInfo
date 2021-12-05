@@ -74,6 +74,15 @@ public:
         return result;
     };
 
+    int getElements(int index) override {
+        int result = 0;
+        if(index <= getSize()) {
+            result = BoxCatVec[index].elements;
+        }
+
+        return result;
+    }
+
     std::vector<BoxUnit> getBoxCatVec() { return BoxCatVec; }
 
 private:

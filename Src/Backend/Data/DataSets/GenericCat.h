@@ -2,10 +2,10 @@
 
 struct GenericUnit {
     unsigned int id;
-    bool         isValid = true;
+    bool isValid = true;
 
     std::string name;
-    int         elements;
+    int elements;
 };
 
 class GenericCat {
@@ -13,10 +13,11 @@ public:
     virtual ~GenericCat() {};
     GenericCat() {};
 
-    int  getSize() { return size; };
+    int getSize() { return size; };
     void setSize(size_t _size) { size = _size; }
 
     virtual std::string getName(int index) = 0;
+    virtual int getElements(int index)     = 0;
 
 private:
     unsigned int size = 0;

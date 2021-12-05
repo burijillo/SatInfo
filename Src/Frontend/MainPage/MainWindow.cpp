@@ -430,8 +430,8 @@ void MainWindow::OnBoxDataLoad(wxCommandEvent &event) {
     // Check if boxCat was already loaded
     if(!this->dataParser.getBoxCatLoaded()) {
         this->dataParser.parseBoxCat();
-        for(auto item : this->dataParser.getBoxCatNameVec()) {
-            std::cout << item.data() << std::endl;
+        for(auto item : this->dataParser.getBoxCatNameMap()) {
+            data_tree_view.get()->addBoxCatData(item.first, item.second);
         }
     }
 }

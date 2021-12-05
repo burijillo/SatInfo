@@ -9,20 +9,20 @@ class DataParser {
 public:
     DataParser();
 
-    bool                     getBoxCatLoaded() { return isBoxCatLoaded; }
-    bool                     parseBoxCat();
-    std::vector<std::string> getBoxCatNameVec() { return boxCatNameVec; }
+    bool getBoxCatLoaded() { return isBoxCatLoaded; }
+    bool parseBoxCat();
+    std::map<std::string, int> getBoxCatNameMap() { return boxCatNameMap; }
 
 private:
     // Data filenames
     std::vector<std::string> dataFileNameVec {"BoxScore.json", "SatCat.json"};
-    bool                     isCookiesADirectory = false;
+    bool isCookiesADirectory = false;
     std::vector<std::string> existingDataFileNames;
-    std::string              dataPath;
+    std::string dataPath;
 
-    bool                     isBoxCatLoaded = false;
-    BoxCat                   boxCat;
-    std::vector<std::string> boxCatNameVec;
+    bool isBoxCatLoaded = false;
+    BoxCat boxCat;
+    std::map<std::string, int> boxCatNameMap;
 
     bool checkIfDataFileExists(std::string fileName);
 };

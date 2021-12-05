@@ -34,7 +34,7 @@ bool DataParser::parseBoxCat() {
         std::string boxCatPath = dataPath + "BoxScore.json";
         if(std::find(existingDataFileNames.begin(), existingDataFileNames.end(), boxCatPath) !=
             existingDataFileNames.end()) {
-            std::ifstream  fs(boxCatPath, std::ifstream::in);
+            std::ifstream fs(boxCatPath, std::ifstream::in);
             nlohmann::json jParser;
             jParser = nlohmann::json::parse(fs);
 
@@ -71,7 +71,7 @@ bool DataParser::parseBoxCat() {
                     decayed_total_count, country_total);
             }
 
-            Logger      logger     = Logger::GetLogger();
+            Logger logger          = Logger::GetLogger();
             std::string boxCatSize = "";
             boxCatSize = "Number of countries/orgs: " + std::to_string(boxCat.getSize());
             logger.CreateMessage(boxCatSize, IObserver::LOG_TYPE::PARSER);
@@ -89,7 +89,8 @@ bool DataParser::parseBoxCat() {
                                              boxUnit.country + " - " + boxUnit.spadoc_cd,
                         IObserver::LOG_TYPE::PARSER);
 
-                    boxCatNameVec.push_back(boxCat.getName(i));
+                    boxCatNameMap.insert(
+                        std::pair<std::string, int>(boxCat.getName(i), boxCat.getElements(i)));
                 } else {
                     logger.CreateMessage("ERROR MASEMO", IObserver::LOG_TYPE::SYS_ERR);
                 }

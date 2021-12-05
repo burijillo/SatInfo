@@ -18,18 +18,18 @@ public:
 
 private:
     wxAuiManager m_mgr;
-    long         m_notebook_style;
-    long         m_notebook_theme;
+    long m_notebook_style;
+    long m_notebook_theme;
 
     DataParser dataParser;
 
     const static int BOXDATA_ID = 5500;
 
-    wxMenuBar *               mb;
-    wxMenu *                  data_menu;
-    wxMenu *                  view_menu;
-    wxMenu *                  help_menu;
-    wxSharedPtr<LogView>      log_view;
+    wxMenuBar *mb;
+    wxMenu *data_menu;
+    wxMenu *view_menu;
+    wxMenu *help_menu;
+    wxSharedPtr<LogView> log_view;
     wxSharedPtr<DataTreeView> data_tree_view;
 
     void OnBoxDataLoad(wxCommandEvent &event);
