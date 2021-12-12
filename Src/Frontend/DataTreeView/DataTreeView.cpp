@@ -1,22 +1,24 @@
 #include "DataTreeView.h"
 
-void DataTreeView::setDataTreeViewCtrl(wxWindow *parent) {
-    std::cout << "TREE VIEEEEEEWWWW\n";
+void DataTreeView::setDataTreeViewCtrl(wxWindow *parent, DataParser *_dataParser) {
+    dataParser       = _dataParser;
     dataTreeViewCtrl = new wxTreeListCtrl(parent, wxID_ANY, wxDefaultPosition,
-        parent->FromDIP(wxSize(190, 90)), wxNO_BORDER | wxTE_MULTILINE);
+        parent->FromDIP(wxSize(220, 90)), wxNO_BORDER | wxTE_MULTILINE);
 
     // This data tree always have the same two columns
-    dataTreeViewCtrl.get()->AppendColumn("Component");
-    dataTreeViewCtrl.get()->AppendColumn("Elements");
-
-    dataTreeViewCtrl.get()->SetColumnWidth(0, 100);
-    dataTreeViewCtrl.get()->SetColumnWidth(1, 90);
+    dataTreeViewCtrl.get()->AppendColumn(
+        "Component", 120, wxALIGN_LEFT, wxCOL_RESIZABLE | wxCOL_SORTABLE);
+    dataTreeViewCtrl.get()->AppendColumn(
+        "Elements", 100, wxALIGN_RIGHT, wxCOL_RESIZABLE | wxCOL_SORTABLE);
 
     wxTreeListItem root = dataTreeViewCtrl.get()->GetRootItem();
+    dataTreeViewCtrl.get()->SetItemComparator(&expandedComparator);
 
-    // Bind contextual menu event
+    // Bind events
     parent->Bind(
         wxEVT_TREELIST_ITEM_CONTEXT_MENU, &DataTreeView::OnItemContextMenu, this, wxID_ANY);
+    parent->Bind(
+        wxEVT_TREELIST_SELECTION_CHANGED, &DataTreeView::OnSelectionChanged, this, wxID_ANY);
 }
 
 void DataTreeView::addBoxCatData(std::string _name, int _elements) {
@@ -42,7 +44,15 @@ void DataTreeView::OnItemContextMenu(wxTreeListEvent &event) {
     const wxTreeListItem item = event.GetItem();
     switch(dataTreeViewCtrl.get()->GetPopupMenuSelectionFromUser(menu)) {
         case Id_Check_Item:
-            std::cout << "hey\n";
+            // Check which data is parsed
+            if(dataParser->getDataParserType() == DataParserType::BOXCAT) {
+                std::cout << "PA TU CASA" << std::endl;
+                std::cout << item.GetID() << "; " << dataTreeViewCtrl.get()->GetItemText(item)
+                          << std::endl;
+                BoxUnit _boxUnit =
+                    dataParser->getBoxUnit(dataTreeViewCtrl.get()->GetItemText(item).ToStdString());
+                std::cout << _boxUnit.country_total << std::endl;
+            }
             break;
 
         case Id_Uncheck_Item:
@@ -68,4 +78,10 @@ void DataTreeView::OnItemContextMenu(wxTreeListEvent &event) {
         case wxID_NONE:
             return;
     }
+}
+
+void DataTreeView::OnSelectionChanged(wxTreeListEvent &event) {
+    dataSelectedName = dataTreeViewCtrl.get()->GetItemText(event.GetItem()).ToStdString();
+    Logger &logger   = Logger::GetLogger();
+    logger.CreateMessage("Selected data: " + dataSelectedName, IObserver::LOG_TYPE::LOG);
 }

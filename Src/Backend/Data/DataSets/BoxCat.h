@@ -66,6 +66,19 @@ public:
         return result;
     }
 
+    BoxUnit getBoxUnit(std::string name) {
+        BoxUnit result;
+
+        for(auto boxItem : BoxCatVec) {
+            if(boxItem.name == name) {
+                return boxItem;
+            }
+        }
+        result.isValid = false;
+
+        return result;
+    }
+
     std::string getName(int index) override {
         std::string result = "";
         if(index <= getSize()) {

@@ -69,6 +69,9 @@ bool DataParser::parseBoxCat() {
                     orbital_rocket_count, orbital_debris_count, orbital_total_count,
                     decayed_payload_count, decayed_rocket_count, decayed_debris_count,
                     decayed_total_count, country_total);
+
+                boxCatNameMap.insert(
+                    std::pair<std::string, int>(country, std::stoi(country_total)));
             }
 
             Logger logger          = Logger::GetLogger();
@@ -85,20 +88,31 @@ bool DataParser::parseBoxCat() {
             for(int i = 0; i < boxCat.getSize(); i++) {
                 BoxUnit boxUnit = boxCat.getBoxUnit(i);
                 if(boxUnit.isValid) {
-                    logger.CreateMessage("COUNTRY " + std::to_string(boxUnit.id) + " : " +
+                    /*logger.CreateMessage("COUNTRY " + std::to_string(boxUnit.id) + " : " +
                                              boxUnit.country + " - " + boxUnit.spadoc_cd,
-                        IObserver::LOG_TYPE::PARSER);
+                        IObserver::LOG_TYPE::PARSER);*/
 
-                    boxCatNameMap.insert(
-                        std::pair<std::string, int>(boxCat.getName(i), boxCat.getElements(i)));
                 } else {
                     logger.CreateMessage("ERROR MASEMO", IObserver::LOG_TYPE::SYS_ERR);
                 }
             }
 
+            dataParserType = DataParserType::BOXCAT;
+
         } else {
             result = false;
         }
+    }
+
+    return result;
+}
+
+BoxUnit DataParser::getBoxUnit(std::string name) {
+    BoxUnit result;
+    result.isValid = false;
+
+    if(isBoxCatLoaded) {
+        result = boxCat.getBoxUnit(name);
     }
 
     return result;

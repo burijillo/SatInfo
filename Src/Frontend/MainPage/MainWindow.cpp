@@ -47,7 +47,10 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
     log_view->setLogTextCtrl(this);
 
     data_tree_view = wxSharedPtr<DataTreeView>(new DataTreeView());
-    data_tree_view->setDataTreeViewCtrl(this);
+    data_tree_view->setDataTreeViewCtrl(this, &dataParser);
+
+    data_show_view = wxSharedPtr<DataShowView>(new DataShowView());
+    data_show_view->setDataShowViewCtrl(this, &dataParser);
 
     // Give this pane an icon, too, just for testing.
     int iconSize = m_mgr.GetArtProvider()->GetMetric(wxAUI_DOCKART_CAPTION_SIZE);
@@ -55,7 +58,7 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
     // Make it even to use 16 pixel icons with default 17 caption height.
     iconSize &= ~1;
 
-    // Create a text control
+    // Create a log control
     m_mgr.AddPane(
         log_view->getLogTextCtrl().get(), wxAuiPaneInfo()
                                               .Name("logPane")
@@ -66,6 +69,7 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
                                               .Icon(wxArtProvider::GetBitmap(wxART_INFORMATION,
                                                   wxART_OTHER, wxSize(iconSize, iconSize))));
 
+    // Create a tree view control
     m_mgr.AddPane(data_tree_view->getDataTreeViewCtrl().get(),
         wxAuiPaneInfo()
             .Name("dataTreeViewPane")
@@ -76,8 +80,13 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
             .Icon(wxArtProvider::GetBitmap(
                 wxART_INFORMATION, wxART_OTHER, wxSize(iconSize, iconSize))));
 
+    // Create a data show control
+    m_mgr.AddPane(data_show_view->getDataShowViewCtrl().get(),
+        wxAuiPaneInfo().Name("dataShowViewPane").CenterPane().PaneBorder(false));
+
     m_mgr.GetPane("logPane").Show().Bottom().Layer(0).Row(0).Position(0);
     m_mgr.GetPane("dataTreeViewPane").Show().Left().Layer(0).Row(0).Position(0);
+    m_mgr.GetPane("dataShowViewPane").Show();
     m_mgr.Update();
 
     //----------------- END TEST ---------------------------

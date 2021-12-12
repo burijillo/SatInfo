@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+enum class DataParserType { BOXCAT = 0 };
+
 class DataParser {
 public:
     DataParser();
@@ -12,6 +14,8 @@ public:
     bool getBoxCatLoaded() { return isBoxCatLoaded; }
     bool parseBoxCat();
     std::map<std::string, int> getBoxCatNameMap() { return boxCatNameMap; }
+    BoxUnit getBoxUnit(std::string name);
+    DataParserType getDataParserType() { return dataParserType; }
 
 private:
     // Data filenames
@@ -19,6 +23,9 @@ private:
     bool isCookiesADirectory = false;
     std::vector<std::string> existingDataFileNames;
     std::string dataPath;
+
+    // Which data type has been parsed
+    DataParserType dataParserType;
 
     bool isBoxCatLoaded = false;
     BoxCat boxCat;

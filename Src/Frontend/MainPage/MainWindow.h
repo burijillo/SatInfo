@@ -3,6 +3,7 @@
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
+#include "../DataShowView/DataShowView.h"
 #include "../DataTreeView/DataTreeView.h"
 #include "../LogView/LogView.h"
 #include "Backend.h"
@@ -31,6 +32,7 @@ private:
     wxMenu *help_menu;
     wxSharedPtr<LogView> log_view;
     wxSharedPtr<DataTreeView> data_tree_view;
+    wxSharedPtr<DataShowView> data_show_view;
 
     void OnBoxDataLoad(wxCommandEvent &event);
 
