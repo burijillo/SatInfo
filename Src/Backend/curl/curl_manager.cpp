@@ -156,6 +156,10 @@ bool curl_manager::check_config_file(const std::string config_path) {
     return res;
 }
 
+/**
+ * @brief Log download data
+ * 
+ */
 void curl_manager::log_download_data() {
     CURLcode ret;
     Logger& logger = Logger::GetLogger();
