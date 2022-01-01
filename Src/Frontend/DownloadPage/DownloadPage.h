@@ -13,9 +13,15 @@ public:
 
 private:
     wxDialog *downloadDialog;
+    wxComboBox *databaseSelector;
+    wxButton *OKButton;
+    wxArrayString databaseArray;
+    curl_manager::download_type category;
 
     std::unique_ptr<curl_manager> curlManager;
 
     void OnOKButton(wxCommandEvent& event);
+    void OnSelectionChange(wxCommandEvent& event);
 
+    bool CheckSelection(std::string selection);
 };

@@ -76,8 +76,10 @@ void curl_manager::download_data(const download_type _download_type) {
     CURLcode ret;
     // Check which download type
     curl = curl_easy_init();
-    std::string download_url = download_manager(_download_type);
-    if (curl != nullptr) {
+    std::string category_selected = category_selector(_download_type);
+    std::string download_url = "";
+    bool correct_url = download_manager(download_url, category_selected);
+    if (curl != nullptr && correct_url) {
         std::string cookies_path = current_path + ("/../../cookies/cookies_space_track.txt");
         std::string config_path = current_path + ("/../../cookies/config.txt");
         std::string json_out_path = current_path + ("/../../Down_Data.json");
@@ -102,19 +104,37 @@ void curl_manager::download_data(const download_type _download_type) {
     }
 }
 
-std::string curl_manager::download_manager(const download_type _download_type) {
-    std::string res = "";
+bool curl_manager::download_manager(std::string &req_url, std::string category) {
+    bool result = false;
+    Logger &logger = Logger::GetLogger();
+
+    if (!category.empty()) {
+        req_url = "https://www.space-track.org/basicspacedata/query/class/" + category + "/format/json";
+        std::string log = "URL req: " + req_url;
+        logger.CreateMessage(log, IObserver::LOG_TYPE::CURL_MAN);
+        return true;
+    }
+
+    logger.CreateMessage("Wrong url built", IObserver::LOG_TYPE::CURL_MAN);
+    return result;
+}
+
+std::string curl_manager::category_selector(const download_type _download_type) {
+    std::string result = "";
+    Logger &logger = Logger::GetLogger();
 
     switch (_download_type) {
-        case download_type::CURRENT_DATA:
-        res = "https://www.space-track.org/basicspacedata/query/class/boxscore/format/json";
-        //res = "https://www.space-track.org/basicspacedata/query/class/satcat/format/json";
-        //res = "https://www.space-track.org/basicspacedata/query/class/satcat/format/csv";
+        case download_type::BOX_CAT:
+        result = "boxscore";
 
+        break;
+
+        default:
+        logger.CreateMessage("Wrong database selected", IObserver::LOG_TYPE::CURL_MAN);
         break;
     }
 
-    return res;
+    return result;
 }
 
 /**

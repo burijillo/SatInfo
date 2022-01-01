@@ -6,19 +6,13 @@ DownloadPage::DownloadPage(wxWindow *parent) {
 
     wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
     // create text ctrl with minimal size 100x60
-    wxArrayString databaseArray;
     databaseArray.Add("BoxCat");
     databaseArray.Add("SatCat");
-    wxComboBox *databaseSelector = new wxComboBox(downloadDialog, wxID_ANY, "Database type", wxDefaultPosition, wxSize(100, 40), databaseArray);
+    databaseSelector = new wxComboBox(downloadDialog, wxID_ABOUT, "Database type", wxDefaultPosition, wxSize(100, 40), databaseArray);
     topsizer->Add(databaseSelector, 1, wxEXPAND, 10);
-    /*topsizer->Add(new wxTextCtrl(downloadDialog, -1, "My text.", wxDefaultPosition,
-                      wxSize(100, 60), wxTE_MULTILINE),
-        1,         // make vertically stretchable
-        wxEXPAND | // make horizontally stretchable
-            wxALL, //   and make border all around
-        10);       // set border width to 10*/
+    OKButton = new wxButton(downloadDialog, wxID_OK, "OK");
     wxBoxSizer *button_sizer = new wxBoxSizer(wxHORIZONTAL);
-    button_sizer->Add(new wxButton(downloadDialog, wxID_OK, "OK"),
+    button_sizer->Add(OKButton,
         0,     // make horizontally unstretchable
         wxALL, // make border all around (implicit top alignment)
         10);   // set border width to 10
@@ -31,8 +25,11 @@ DownloadPage::DownloadPage(wxWindow *parent) {
         wxALIGN_CENTER);                              // no border and centre horizontally
     downloadDialog->SetSizerAndFit(topsizer);
 
+    OKButton->Disable();
+
     // Bind events
     downloadDialog->Bind(wxEVT_BUTTON, &DownloadPage::OnOKButton, this, wxID_OK);
+    downloadDialog->Bind(wxEVT_COMBOBOX, &DownloadPage::OnSelectionChange, this, wxID_ABOUT);
 
     downloadDialog->ShowModal();
 }
@@ -40,7 +37,35 @@ DownloadPage::DownloadPage(wxWindow *parent) {
 void DownloadPage::OnOKButton(wxCommandEvent& event) {
     std::cout << "aloha\n";
     curlManager = std::make_unique<curl_manager>();
-    curlManager.get()->download_data(curl_manager::download_type::CURRENT_DATA);
+    curlManager.get()->download_data(category);
     std::cout << "alochao\n";
     downloadDialog->Close();
+}
+
+void DownloadPage::OnSelectionChange(wxCommandEvent& event) {
+    // Check on string selected
+    std::string selection = event.GetString().ToStdString();
+    if (CheckSelection(selection)) {
+        OKButton->Enable();
+
+        if (selection == databaseArray[0]) {
+            category = curl_manager::download_type::BOX_CAT;
+        } else if (selection == databaseArray[1]) {
+            category = curl_manager::download_type::SAT_CAT;
+        }
+    } else {
+        OKButton->Disable();
+    }
+}
+
+bool DownloadPage::CheckSelection(std::string selection) {
+    bool result = false;
+
+    for (auto item : databaseArray) {
+        if (item == selection){
+            return true;
+        }
+    }
+
+    return result;
 }

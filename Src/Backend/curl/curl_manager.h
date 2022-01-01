@@ -12,7 +12,8 @@ class curl_manager
     public:
 
         enum class download_type {
-            CURRENT_DATA = 0,
+            BOX_CAT = 0,
+            SAT_CAT = 1,
         };
 
         curl_manager();
@@ -25,7 +26,8 @@ class curl_manager
 
         bool curl_auth(const std::string cookies_path, const std::string config_path);
         bool check_config_file(const std::string config_path);
-        std::string download_manager(const download_type _download_type);
+        bool download_manager(std::string &req_url, std::string category);
+        std::string category_selector(const download_type _download_type);
         void log_download_data();
 
         std::string current_path;
