@@ -1,10 +1,13 @@
 #include "MainWindow.h"
+#include <chrono>
+#include <thread>
 
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
     EVT_AUI_PANE_CLOSE(MainWindow::OnPaneClose)
     EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
     EVT_MENU(wxID_VIEW_DETAILS, MainWindow::OnShowLog)
     EVT_MENU(BOXDATA_ID, MainWindow::OnBoxDataLoad)
+    EVT_MENU(BOXDATA_DOWN_ID, MainWindow::OnBoxDataDownload)
 wxEND_EVENT_TABLE()
 
 MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
@@ -24,9 +27,11 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
 
     //----------------- TEST ---------------------------
 
-    data_menu = new wxMenu();
+    download_menu = new wxMenu();
+    download_menu->Append(BOXDATA_DOWN_ID, "Download BoxCat Data");
 
-    (data_menu)->Append(BOXDATA_ID, "Load BoxCat Data");
+    data_menu = new wxMenu();
+    data_menu->Append(BOXDATA_ID, "Load BoxCat Data");
 
     view_menu = new wxMenu();
     view_menu->AppendCheckItem(wxID_VIEW_DETAILS, "Show Log");
@@ -36,6 +41,7 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
     help_menu->Append(wxID_ABOUT);
 
     mb = new wxMenuBar;
+    mb->Append(download_menu, _("&Download"));
     mb->Append(data_menu, _("&Data"));
     mb->Append(view_menu, _("&View"));
     mb->Append(help_menu, _("&Help"));
@@ -433,7 +439,7 @@ MainWindow::MainWindow(wxWindow *parent, wxWindowID id, const wxString &title,
     m_mgr.Update();*/
 }
 
-void MainWindow::OnExit(wxCommandEvent &event) { Close(true); }
+//void MainWindow::OnExit(wxCommandEvent &event) { Close(true); }
 
 void MainWindow::OnBoxDataLoad(wxCommandEvent &event) {
     // Check if boxCat was already loaded
@@ -443,6 +449,13 @@ void MainWindow::OnBoxDataLoad(wxCommandEvent &event) {
             data_tree_view.get()->addBoxCatData(item.first, item.second);
         }
     }
+}
+
+void MainWindow::OnBoxDataDownload(wxCommandEvent &event) {
+    // TODO Data has to be done properly depending on which download is needed.
+    Logger& logger = Logger::GetLogger();
+    logger.CreateMessage("Download init", IObserver::LOG_TYPE::CURL_MAN);
+    DownloadPage download_page = DownloadPage(this);
 }
 
 void MainWindow::OnShowLog(wxCommandEvent &event) {

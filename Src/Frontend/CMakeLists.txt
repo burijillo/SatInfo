@@ -8,7 +8,8 @@ add_library(Frontend_lib
     MainPage/MainWindow.cpp
     LogView/LogView.cpp
     DataTreeView/DataTreeView.cpp
-    DataShowView/DataShowView.cpp)
+    DataShowView/DataShowView.cpp
+    DownloadPage/DownloadPage.cpp)
 
 add_subdirectory(MainPage)
 add_subdirectory(Res)

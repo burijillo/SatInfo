@@ -1,4 +1,5 @@
 #include "curl_manager.h"
+#include <chrono>
 #include "../Log/Logger.h"
 
 /**
@@ -32,6 +33,7 @@ bool curl_manager::curl_auth(const std::string cookies_path, const std::string c
     bool res = false;
     CURLcode ret;
     Logger& logger = Logger::GetLogger();
+    logger.CreateMessage("Curl authentication", IObserver::LOG_TYPE::CURL_MAN);
 
     //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookies_path.c_str());
@@ -46,10 +48,10 @@ bool curl_manager::curl_auth(const std::string cookies_path, const std::string c
         if (ret == CURLE_OK){
             ret = curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies);
             if(ret == CURLE_OK && cookies) {
-                logger.CreateMessage("COOKIES", IObserver::LOG_TYPE::LOG);
+                logger.CreateMessage("COOKIES", IObserver::LOG_TYPE::CURL_MAN);
                 struct curl_slist *each = cookies;
                 while(each) {
-                    logger.CreateMessage(each->data, IObserver::LOG_TYPE::LOG);
+                    logger.CreateMessage(each->data, IObserver::LOG_TYPE::CURL_MAN);
                     each = each->next;
                 }
                 curl_slist_free_all(cookies);
@@ -73,9 +75,8 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 void curl_manager::download_data(const download_type _download_type) {
     CURLcode ret;
     // Check which download type
-    std::string download_url = download_manager(_download_type);
-
     curl = curl_easy_init();
+    std::string download_url = download_manager(_download_type);
     if (curl != nullptr) {
         std::string cookies_path = current_path + ("/../../cookies/cookies_space_track.txt");
         std::string config_path = current_path + ("/../../cookies/config.txt");
@@ -126,6 +127,8 @@ std::string curl_manager::download_manager(const download_type _download_type) {
  */
 bool curl_manager::check_config_file(const std::string config_path) {
     bool res = false;
+    std::string log;
+    Logger& logger = Logger::GetLogger();
 
     // Check if config file exists
     std::ifstream config_file (config_path);
@@ -140,16 +143,16 @@ bool curl_manager::check_config_file(const std::string config_path) {
             } else if (key == "pwd") {
                 space_track_pwd = line.substr(line.find("=") + 1, (line.length() - line.find("=")));
             } else {
-                // TODO REVISIT WHEN LOG EXISTS
-                std::cout << "Bad config data\n";
+                log = "Bad config file";
+                logger.CreateMessage(log, IObserver::LOG_TYPE::CURL_MAN);
                 res = false;
             }
         }
         res = true;
         config_file.close();    
     } else {
-        // TODO REVISIT WHEN LOG EXISTS
-        std::cout << config_path << " doesnt exist\n";
+        log = config_path + " doesnt exist";
+        logger.CreateMessage(log, IObserver::LOG_TYPE::CURL_MAN);
         res = false;
     }
 
@@ -165,17 +168,19 @@ void curl_manager::log_download_data() {
     Logger& logger = Logger::GetLogger();
     std::string log;
 
+    logger.CreateMessage("Data succesfully downloaded", IObserver::LOG_TYPE::CURL_MAN);
+
     // Get download size
     curl_off_t down_data;
     ret = curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD_T, &down_data);
     if (ret == CURLE_OK) {
         log = "Downloaded: " + std::to_string(down_data) + " bytes";
-        logger.CreateMessage(log, IObserver::LOG_TYPE::LOG);
+        logger.CreateMessage(log, IObserver::LOG_TYPE::CURL_MAN);
     }
     curl_off_t speed_data;
     ret = curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD_T, &speed_data);
     if (ret == CURLE_OK) {
         log = "Download speed: " + std::to_string(speed_data) + " bytes/sec";
-        logger.CreateMessage(log, IObserver::LOG_TYPE::LOG);
+        logger.CreateMessage(log, IObserver::LOG_TYPE::CURL_MAN);
     }
 }

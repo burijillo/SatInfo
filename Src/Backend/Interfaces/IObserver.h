@@ -1,7 +1,6 @@
 #pragma once
 #include <string.h>
 #include <iostream>
-#include "../Log/Logger.h"
 
 class IObserver
 {
@@ -9,7 +8,8 @@ public:
    enum class LOG_TYPE {
       LOG,
       PARSER,
-      SYS_ERR
+      SYS_ERR,
+      CURL_MAN
    };
 
    virtual ~IObserver () {};

@@ -5,16 +5,18 @@
 #include <filesystem>
 #include <curl/curl.h>
 #include <json.hpp>
+#include <thread>
 
 class curl_manager
 {
     public:
-        curl_manager();
-        ~curl_manager();
 
         enum class download_type {
             CURRENT_DATA = 0,
         };
+
+        curl_manager();
+        ~curl_manager();
 
         void download_data(const download_type _download_type);
     

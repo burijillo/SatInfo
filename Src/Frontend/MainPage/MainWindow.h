@@ -6,6 +6,7 @@
 #include "../DataShowView/DataShowView.h"
 #include "../DataTreeView/DataTreeView.h"
 #include "../LogView/LogView.h"
+#include "../DownloadPage/DownloadPage.h"
 #include "Backend.h"
 #include "wx/artprov.h"
 #include "wx/aui/aui.h"
@@ -25,8 +26,10 @@ private:
     DataParser dataParser;
 
     const static int BOXDATA_ID = 5500;
+    const static int BOXDATA_DOWN_ID = 5600;
 
     wxMenuBar *mb;
+    wxMenu *download_menu;
     wxMenu *data_menu;
     wxMenu *view_menu;
     wxMenu *help_menu;
@@ -35,6 +38,7 @@ private:
     wxSharedPtr<DataShowView> data_show_view;
 
     void OnBoxDataLoad(wxCommandEvent &event);
+    void OnBoxDataDownload(wxCommandEvent &event);
 
     void OnShowLog(wxCommandEvent &event);
 

@@ -46,6 +46,7 @@ void LogView::PrintInfo ()
 {
    std::string msg = msgConstructor(messageFromLogger_, logTypeFromLogger_);
    (*logTextCtrl) << msg;
+   logTextCtrl.get()->Update();
 }
 
 std::string LogView::getTagFromMap(LOG_TYPE logType)

@@ -23,7 +23,8 @@ private:
    std::map<LOG_TYPE, std::string> logTypeMap {
       {LOG_TYPE::LOG, "[LOG]"},
       {LOG_TYPE::PARSER, "[PARSER]"},
-      {LOG_TYPE::SYS_ERR, "[SYSTEM ERROR]"}
+      {LOG_TYPE::SYS_ERR, "[SYSTEM ERROR]"},
+      {LOG_TYPE::CURL_MAN, "[CURL MANAGER]"}
    };
    std::string getTagFromMap(LOG_TYPE logType);
    std::string msgConstructor(std::string msg, LOG_TYPE log_type);
