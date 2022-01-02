@@ -72,44 +72,46 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     return written;
 }
 
-void curl_manager::download_data(const download_type _download_type) {
+void curl_manager::download_data(const download_type _download_type, const std::string cat_parameter) {
     CURLcode ret;
     // Check which download type
     curl = curl_easy_init();
     std::string category_selected = category_selector(_download_type);
     std::string download_url = "";
-    bool correct_url = download_manager(download_url, category_selected);
+    bool correct_url = download_manager(download_url, category_selected, cat_parameter);
     if (curl != nullptr && correct_url) {
         std::string cookies_path = current_path + ("/../../cookies/cookies_space_track.txt");
         std::string config_path = current_path + ("/../../cookies/config.txt");
         std::string json_out_path = current_path + ("/../../Down_Data.json");
 
-        curl_auth(cookies_path, config_path);
+        if (curl_auth(cookies_path, config_path)) {
 
-        //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookies_path.c_str());
-        //curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, (curl_off_t)100000);
-        // TODO REVISIT SO SEARCH IS CONFIGURABLE
-        curl_easy_setopt(curl, CURLOPT_URL,download_url.c_str());
-        FILE* fp;
-        fp = fopen(json_out_path.c_str(),"wb");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        ret = curl_easy_perform(curl);
-        log_download_data();
-        fclose(fp);
+            //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+            curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookies_path.c_str());
+            //curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, (curl_off_t)100000);
+            // TODO REVISIT SO SEARCH IS CONFIGURABLE
+            curl_easy_setopt(curl, CURLOPT_URL,download_url.c_str());
+            FILE* fp;
+            fp = fopen(json_out_path.c_str(),"wb");
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+            ret = curl_easy_perform(curl);
+            log_download_data();
+            fclose(fp);
+        }
 
         curl_easy_cleanup(curl);
         curl = nullptr;
     }
 }
 
-bool curl_manager::download_manager(std::string &req_url, std::string category) {
+bool curl_manager::download_manager(std::string &req_url, std::string category, std::string cat_parameter) {
     bool result = false;
     Logger &logger = Logger::GetLogger();
 
-    if (!category.empty()) {
-        req_url = "https://www.space-track.org/basicspacedata/query/class/" + category + "/format/json";
+    if (!category.empty() & !cat_parameter.empty()) {
+        //TODO TEST
+        req_url = "https://www.space-track.org/basicspacedata/query/class/" + category + "/" + cat_parameter + "/%3E39/format/json";
         std::string log = "URL req: " + req_url;
         logger.CreateMessage(log, IObserver::LOG_TYPE::CURL_MAN);
         return true;

@@ -31,7 +31,8 @@ DownloadPage::DownloadPage(wxWindow *parent) {
 
     // Bind events
     downloadDialog->Bind(wxEVT_BUTTON, &DownloadPage::OnOKButton, this, wxID_OK);
-    downloadDialog->Bind(wxEVT_COMBOBOX, &DownloadPage::OnSelectionChange, this, wxID_ABOUT);
+    downloadDialog->Bind(wxEVT_COMBOBOX, &DownloadPage::OnCategorySelectionChange, this, wxID_ABOUT);
+    downloadDialog->Bind(wxEVT_COMBOBOX, &DownloadPage::OnParameterSelectionChange, this, wxID_PREVIEW);
 
     downloadDialog->ShowModal();
 }
@@ -39,12 +40,12 @@ DownloadPage::DownloadPage(wxWindow *parent) {
 void DownloadPage::OnOKButton(wxCommandEvent& event) {
     std::cout << "aloha\n";
     curlManager = std::make_unique<curl_manager>();
-    curlManager.get()->download_data(category);
+    curlManager.get()->download_data(category, cat_parameter);
     std::cout << "alochao\n";
     downloadDialog->Close();
 }
 
-void DownloadPage::OnSelectionChange(wxCommandEvent& event) {
+void DownloadPage::OnCategorySelectionChange(wxCommandEvent& event) {
     // Check on string selected
     std::string selection = event.GetString().ToStdString();
     if (CheckSelection(selection)) {
@@ -65,6 +66,10 @@ void DownloadPage::OnSelectionChange(wxCommandEvent& event) {
     } else {
         OKButton->Disable();
     }
+}
+
+void DownloadPage::OnParameterSelectionChange(wxCommandEvent& event) {
+    cat_parameter = event.GetString().ToStdString();
 }
 
 bool DownloadPage::CheckSelection(std::string selection) {

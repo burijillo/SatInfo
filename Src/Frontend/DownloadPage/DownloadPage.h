@@ -19,12 +19,15 @@ private:
     wxButton *OKButton;
     wxArrayString databaseArray;
     wxArrayString parameterArray;
+
     curl_manager::download_type category;
+    std::string cat_parameter;
 
     std::unique_ptr<curl_manager> curlManager;
 
     void OnOKButton(wxCommandEvent& event);
-    void OnSelectionChange(wxCommandEvent& event);
+    void OnCategorySelectionChange(wxCommandEvent& event);
+    void OnParameterSelectionChange(wxCommandEvent& event);
 
     bool CheckSelection(std::string selection);
     void FillParameterArray();
