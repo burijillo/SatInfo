@@ -119,19 +119,29 @@ bool curl_manager::download_manager(std::string &req_url, std::string category) 
     return result;
 }
 
+/**
+ * @brief Space track category selection
+ * 
+ * @param _download_type 
+ * @return std::string 
+ */
 std::string curl_manager::category_selector(const download_type _download_type) {
     std::string result = "";
     Logger &logger = Logger::GetLogger();
 
     switch (_download_type) {
         case download_type::BOX_CAT:
-        result = "boxscore";
+            result = "boxscore";
 
-        break;
+            break;
+        
+        case download_type::SAT_CAT:
+            result = "satcat";
+            break;
 
         default:
-        logger.CreateMessage("Wrong database selected", IObserver::LOG_TYPE::CURL_MAN);
-        break;
+            logger.CreateMessage("Wrong database selected", IObserver::LOG_TYPE::CURL_MAN);
+            break;
     }
 
     return result;

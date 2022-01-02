@@ -3,7 +3,8 @@
 #include <array>
 #include <string>
 
-const static std::array<std::string, 12> boxCatProp = {"COUNTRY", "SPADOC_CD", "ORBITAL_TBA",
+const static int boxCatPropSize = 12;
+const static std::array<std::string, boxCatPropSize> boxCatProp = {"COUNTRY", "SPADOC_CD", "ORBITAL_TBA",
     "ORBITAL_PAYLOAD_COUNT", "ORBITAL_ROCKET_BODY_COUNT", "ORBITAL_DEBRIS_COUNT",
     "ORBITAL_TOTAL_COUNT", "DECAYED_PAYLOAD_COUNT", "DECAYED_ROCKET_BODY_COUNT",
     "DECAYED_DEBRIS_COUNT", "DECAYED_TOTAL_COUNT", "COUNTRY_TOTAL"};
